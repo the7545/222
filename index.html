@@ -1,1608 +1,552 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>浙江省校园导航 - 小阮AI助手</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        /* 全局样式重置 */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
-        }
-        
-        /* 主体样式 */
-        body {
-            background-color: #f5f7fa;
-            color: #333;
-            line-height: 1.6;
-        }
-        
-        /* 容器样式 */
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-        
-        /* 头部样式 */
-        header {
-            background: linear-gradient(135deg, #1a6dcc 0%, #0d4d9c 100%);
-            color: white;
-            padding: 20px 0;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
-        
-        /* 头部内容布局 */
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        /* Logo样式 */
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-        
-        .logo i {
-            font-size: 32px;
-            color: #ffd166;
-        }
-        
-        .logo-text h1 {
-            font-size: 24px;
-            margin-bottom: 5px;
-        }
-        
-        .logo-text p {
-            font-size: 14px;
-            opacity: 0.9;
-        }
-        
-        /* 导航样式 */
-        nav ul {
-            display: flex;
-            list-style: none;
-            gap: 25px;
-        }
-        
-        nav a {
-            color: white;
-            text-decoration: none;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            padding: 8px 12px;
-            border-radius: 4px;
-        }
-        
-        nav a:hover, nav a.active {
-            background-color: rgba(255, 255, 255, 0.2);
-        }
-        
-        /* 英雄区域样式 */
-        .hero {
-            padding: 60px 0;
-            text-align: center;
-            background-color: #eef2f7;
-        }
-        
-        .hero h2 {
-            font-size: 36px;
-            margin-bottom: 15px;
-            color: #1a6dcc;
-        }
-        
-        .hero p {
-            font-size: 18px;
-            max-width: 700px;
-            margin: 0 auto 30px;
-            color: #555;
-        }
-        
-        /* 搜索框样式 */
-        .search-box {
-            max-width: 600px;
-            margin: 0 auto;
-            position: relative;
-            display: flex;
-        }
-        
-        .search-box input {
-            width: 100%;
-            padding: 15px 20px;
-            border: none;
-            border-radius: 50px 0 0 50px;
-            font-size: 16px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        }
-        
-        .search-box select {
-            padding: 0 15px;
-            border: none;
-            border-left: 1px solid #eee;
-            border-right: 1px solid #eee;
-            background: white;
-            cursor: pointer;
-        }
-        
-        .search-box button {
-            background: #1a6dcc;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 0 50px 50px 0;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .search-box button:hover {
-            background: #0d4d9c;
-        }
-        
-        /* 主内容区域样式 */
-        .main-content {
-            display: flex;
-            gap: 30px;
-            margin: 40px 0;
-        }
-        
-        /* 地图容器样式 */
-        .map-container {
-            flex: 7;
-            background: white;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-            height: 600px;
-            position: relative;
-        }
-        
-        #map {
-            width: 100%;
-            height: 100%;
-        }
-        
-        /* 侧边栏样式 */
-        .sidebar {
-            flex: 3;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-            height: 600px;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .sidebar-header {
-            padding: 15px 25px;
-            border-bottom: 1px solid #f0f0f0;
-        }
-        
-        .sidebar-tabs {
-            display: flex;
-            border-bottom: 1px solid #f0f0f0;
-        }
-        
-        .sidebar-tab {
-            flex: 1;
-            padding: 12px;
-            text-align: center;
-            background: none;
-            border: none;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-weight: 500;
-        }
-        
-        .sidebar-tab.active {
-            background: #f0f7ff;
-            color: #1a6dcc;
-            border-bottom: 2px solid #1a6dcc;
-        }
-        
-        .sidebar-content {
-            flex: 1;
-            overflow-y: auto;
-            padding: 0;
-        }
-        
-        .tab-pane {
-            display: none;
-            padding: 25px;
-            height: 100%;
-            overflow-y: auto;
-        }
-        
-        .tab-pane.active {
-            display: block;
-        }
-        
-        .tab-pane h3 {
-            color: #1a6dcc;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #f0f0f0;
-        }
-        
-        .school-list, .food-list {
-            list-style: none;
-        }
-        
-        .school-item, .food-item {
-            padding: 15px;
-            border-bottom: 1px solid #f0f0f0;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border-radius: 8px;
-            margin-bottom: 10px;
-        }
-        
-        .school-item:hover, .food-item:hover {
-            background-color: #f0f7ff;
-            transform: translateY(-2px);
-        }
-        
-        .school-item.active {
-            background-color: #e1effe;
-            border-left: 4px solid #1a6dcc;
-        }
-        
-        .school-name, .food-name {
-            font-weight: 600;
-            margin-bottom: 5px;
-            color: #1a6dcc;
-        }
-        
-        .school-address, .food-address {
-            font-size: 14px;
-            color: #666;
-        }
-        
-        .food-rating {
-            display: flex;
-            align-items: center;
-            margin-top: 5px;
-            font-size: 14px;
-        }
-        
-        .food-rating .stars {
-            color: #ffc107;
-            margin-right: 5px;
-        }
-        
-        /* 打车面板样式 */
-        .ride-panel {
-            padding: 20px;
-        }
-        
-        .ride-option {
-            display: flex;
-            justify-content: space-between;
-            padding: 15px;
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
-            margin-bottom: 15px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .ride-option:hover {
-            border-color: #1a6dcc;
-            background-color: #f8fbff;
-        }
-        
-        .ride-option.selected {
-            border-color: #1a6dcc;
-            background-color: #e1effe;
-        }
-        
-        .ride-info {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .ride-icon {
-            font-size: 24px;
-            color: #1a6dcc;
-        }
-        
-        .ride-details h4 {
-            margin-bottom: 5px;
-        }
-        
-        .ride-details p {
-            font-size: 14px;
-            color: #666;
-        }
-        
-        .ride-price {
-            text-align: right;
-        }
-        
-        .ride-price .price {
-            font-size: 18px;
-            font-weight: 600;
-            color: #1a6dcc;
-        }
-        
-        .ride-price .time {
-            font-size: 14px;
-            color: #666;
-        }
-        
-        .ride-actions {
-            margin-top: 20px;
-        }
-        
-        .btn {
-            display: block;
-            width: 100%;
-            padding: 12px;
-            background: #1a6dcc;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-size: 16px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .btn:hover {
-            background: #0d4d9c;
-        }
-        
-        /* 出行规划面板样式 */
-        .route-panel {
-            padding: 20px;
-        }
-        
-        .route-form {
-            margin-bottom: 20px;
-        }
-        
-        .form-group {
-            margin-bottom: 15px;
-        }
-        
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: 500;
-        }
-        
-        .form-group input, .form-group select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 14px;
-        }
-        
-        .route-options {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-        
-        .route-option {
-            flex: 1;
-            padding: 10px;
-            text-align: center;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .route-option.active {
-            border-color: #1a6dcc;
-            background-color: #e1effe;
-            color: #1a6dcc;
-        }
-        
-        .route-result {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 6px;
-            margin-top: 20px;
-        }
-        
-        .route-detail {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-        }
-        
-        /* 功能卡片样式 */
-        .features {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 25px;
-            margin: 50px 0;
-        }
-        
-        .feature-card {
-            background: white;
-            border-radius: 12px;
-            padding: 25px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-            transition: all 0.3s ease;
-        }
-        
-        .feature-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12);
-        }
-        
-        .feature-icon {
-            font-size: 36px;
-            color: #1a6dcc;
-            margin-bottom: 15px;
-        }
-        
-        .feature-card h3 {
-            margin-bottom: 10px;
-            color: #333;
-        }
-        
-        /* 长途出行规划样式 */
-        .long-trip-panel {
-            padding: 20px;
-        }
-        
-        .trip-plan {
-            margin-top: 20px;
-            background: #f8f9fa;
-            border-radius: 8px;
-            padding: 15px;
-        }
-        
-        .trip-day {
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid #e0e0e0;
-        }
-        
-        .trip-day:last-child {
-            border-bottom: none;
-        }
-        
-        .trip-day h4 {
-            color: #1a6dcc;
-            margin-bottom: 10px;
-        }
-        
-        .trip-day ul {
-            padding-left: 20px;
-        }
-        
-        .trip-day li {
-            margin-bottom: 8px;
-        }
-        
-        /* 美食推荐详情样式 */
-        .food-detail {
-            display: none;
-            padding: 15px;
-            background: #f8f9fa;
-            border-radius: 8px;
-            margin-top: 15px;
-        }
-        
-        .food-detail.active {
-            display: block;
-        }
-        
-        .food-detail h4 {
-            color: #1a6dcc;
-            margin-bottom: 10px;
-        }
-        
-        .food-detail p {
-            margin-bottom: 10px;
-        }
-        
-        /* 页脚样式 */
-        footer {
-            background: #1a2332;
-            color: white;
-            padding: 40px 0 20px;
-            margin-top: 50px;
-        }
-        
-        .footer-content {
-            display: flex;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 30px;
-            margin-bottom: 30px;
-        }
-        
-        .footer-section {
-            flex: 1;
-            min-width: 250px;
-        }
-        
-        .footer-section h3 {
-            margin-bottom: 20px;
-            font-size: 18px;
-            color: #ffd166;
-        }
-        
-        .footer-section p, .footer-section a {
-            color: #b0b7c3;
-            margin-bottom: 10px;
-            display: block;
-            text-decoration: none;
-            transition: all 0.3s ease;
-        }
-        
-        .footer-section a:hover {
-            color: #ffd166;
-        }
-        
-        .copyright {
-            text-align: center;
-            padding-top: 20px;
-            border-top: 1px solid #2a3446;
-            color: #8a94a6;
-            font-size: 14px;
-        }
-        
-        /* 响应式设计 */
-        @media (max-width: 768px) {
-            .main-content {
-                flex-direction: column;
-            }
-            
-            .map-container, .sidebar {
-                width: 100%;
-            }
-            
-            .header-content {
-                flex-direction: column;
-                text-align: center;
-                gap: 15px;
-            }
-            
-            nav ul {
-                flex-wrap: wrap;
-                justify-content: center;
-            }
-            
-            .search-box {
-                flex-direction: column;
-            }
-            
-            .search-box input, .search-box select, .search-box button {
-                border-radius: 4px;
-                margin-bottom: 10px;
-            }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, shrink-to-fit=no, viewport-fit=cover">
+  <title>校园生活平台 · 聊天 · 交易 · 支付</title>
+  <style>
+    :root {
+      --primary: #07C160;
+      --primary-dark: #06AD56;
+      --wechat: #09BB07;
+      --alipay: #1677FF;
+      --bg: #f5f6f8;
+      --card: #fff;
+      --text: #1a1a2e;
+      --text-secondary: #666;
+      --border: #e8e8e8;
+      --shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+      --shadow-lg: 0 12px 28px rgba(0, 0, 0, 0.1);
+      --radius: 18px;
+      --radius-sm: 12px;
+      --transition: 0.25s ease;
+      --danger: #e74c3c;
+      --forum: #6c5ce7;
+      --market: #e17055;
+      --recycle: #00b894;
+      --admin: #2d3436;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      min-height: 100vh;
+      padding-bottom: 80px;
+    }
+    .navbar {
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 1px 12px rgba(0,0,0,0.04);
+    }
+    .navbar-inner {
+      max-width: 1100px; margin: 0 auto; padding: 10px 20px;
+      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;
+    }
+    .logo { font-size: 1.5rem; font-weight: 700; color: var(--primary); display: flex; align-items: center; gap: 6px; cursor: pointer; }
+    .logo .icon { width: 34px; height: 34px; background: var(--primary); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; color: #fff; }
+    .nav-links { display: flex; gap: 4px; flex-wrap: wrap; }
+    .nav-links button {
+      padding: 8px 14px; border: none; background: transparent; border-radius: 25px; cursor: pointer;
+      font-size: 0.9rem; font-weight: 500; color: var(--text-secondary); transition: var(--transition); white-space: nowrap; display: flex; align-items: center; gap: 4px;
+    }
+    .nav-links button:hover { background: #f0f0f0; color: #1a1a2e; }
+    .nav-links button.active { background: var(--primary); color: #fff; font-weight: 600; box-shadow: 0 6px 16px rgba(7, 193, 96, 0.3); }
+    .user-area { display: flex; align-items: center; gap: 8px; }
+    .btn-sm { padding: 6px 16px; border-radius: 20px; border: none; cursor: pointer; font-size: 0.85rem; font-weight: 500; transition: var(--transition); }
+    .btn-login { background: var(--primary); color: #fff; }
+    .btn-login:hover { background: var(--primary-dark); }
+    .btn-logout { background: #f0f0f0; color: #555; }
+    .btn-logout:hover { background: #e0e0e0; }
+    .btn-admin-badge { background: var(--admin); color: #fff; font-size: 0.7rem; padding: 4px 10px; border-radius: 12px; font-weight: 600; }
+    .main-container { max-width: 1100px; margin: 0 auto; padding: 20px; }
+    .page { display: none; animation: fadeSlide 0.3s ease; }
+    .page.active { display: block; }
+    @keyframes fadeSlide { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+    .card {
+      background: var(--card); border-radius: var(--radius); padding: 18px 20px; margin-bottom: 14px;
+      box-shadow: var(--shadow); border: 1px solid transparent; transition: var(--transition);
+    }
+    .card:hover { box-shadow: var(--shadow-lg); border-color: #f0f0f0; }
+    .card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; flex-wrap: wrap; gap: 8px; }
+    .badge { display: inline-block; padding: 4px 10px; border-radius: 14px; font-size: 0.7rem; font-weight: 600; }
+    .badge-forum { background: #f0ebff; color: var(--forum); }
+    .badge-market { background: #fff3ef; color: var(--market); }
+    .badge-rent { background: #fff8e1; color: #e67e22; }
+    .badge-sell { background: #ffeaea; color: #e74c3c; }
+    .badge-recycle { background: #e8faf3; color: var(--recycle); }
+    .btn { padding: 10px 20px; border-radius: 25px; border: none; cursor: pointer; font-weight: 600; font-size: 0.9rem; transition: var(--transition); display: inline-flex; align-items: center; gap: 6px; }
+    .btn-primary { background: var(--primary); color: #fff; }
+    .btn-primary:hover { background: var(--primary-dark); }
+    .btn-outline { background: #fff; border: 2px solid var(--border); color: #444; }
+    .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
+    .btn-wechat { background: var(--wechat); color: #fff; }
+    .btn-wechat:hover { background: #06AD56; }
+    .btn-alipay { background: var(--alipay); color: #fff; }
+    .btn-alipay:hover { background: #1256cc; }
+    .grid-2 { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
+    .media-preview { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+    .media-item { width: 80px; height: 80px; border-radius: 8px; overflow: hidden; background: #f0f0f0; display: flex; align-items: center; justify-content: center; border: 2px solid var(--border); position: relative; }
+    .media-item img, .media-item video { width: 100%; height: 100%; object-fit: cover; }
+    .remove-media { position: absolute; top: 2px; right: 2px; background: rgba(0,0,0,0.6); color: #fff; border: none; border-radius: 50%; width: 20px; height: 20px; font-size: 12px; cursor: pointer; }
+    .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: #333; color: #fff; padding: 10px 22px; border-radius: 25px; font-weight: 500; z-index: 3000; box-shadow: 0 8px 20px rgba(0,0,0,0.2); }
+    .toast.success { background: #07C160; }
+    .toast.error { background: #e74c3c; }
+    .modal-overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5);
+      z-index: 2000; display: flex; align-items: center; justify-content: center; animation: fadeIn 0.2s;
+    }
+    .modal {
+      background: #fff; border-radius: var(--radius); padding: 24px; width: 90%; max-width: 500px;
+      box-shadow: var(--shadow-lg); position: relative; max-height: 85vh; overflow-y: auto;
+    }
+    .modal-close { position: absolute; top: 12px; right: 16px; background: none; border: none; font-size: 1.4rem; cursor: pointer; color: #888; }
+    .chat-messages { max-height: 250px; overflow-y: auto; background: #f9fafb; border-radius: 12px; padding: 10px; margin: 10px 0; }
+    .chat-bubble { margin-bottom: 10px; display: flex; flex-direction: column; }
+    .chat-bubble.mine { align-items: flex-end; }
+    .chat-bubble.other { align-items: flex-start; }
+    .chat-bubble .msg { max-width: 75%; padding: 8px 14px; border-radius: 18px; font-size: 0.9rem; word-break: break-word; }
+    .mine .msg { background: #d1fae5; color: #065f46; }
+    .other .msg { background: #fff; border: 1px solid #e5e7eb; color: #1f2937; }
+    .chat-bubble .meta { font-size: 0.7rem; color: #999; margin: 2px 4px 0; }
+    .payment-modal { max-width: 350px; }
+    @media (max-width: 600px) {
+      .navbar-inner { padding: 8px 12px; }
+      .nav-links button { padding: 6px 10px; font-size: 0.8rem; }
+    }
+  </style>
 </head>
 <body>
-    <!-- 头部区域 -->
-    <header>
-        <div class="container">
-            <div class="header-content">
-                <div class="logo">
-                    <i class="fas fa-robot"></i>
-                    <div class="logo-text">
-                        <h1>小阮AI助手</h1>
-                        <p>浙江省校园导航系统</p>
-                    </div>
-                </div>
-                <nav>
-                    <ul>
-                        <li><a href="#" class="active">首页</a></li>
-                        <li><a href="#">校园导航</a></li>
-                        <li><a href="#">生活服务</a></li>
-                        <li><a href="#">职业规划</a></li>
-                        <li><a href="#">关于我们</a></li>
-                    </ul>
-                </nav>
-            </div>
-        </div>
-    </header>
-
-    <!-- 英雄区域 -->
-    <section class="hero">
-        <div class="container">
-            <h2>探索浙江省高校校园</h2>
-            <p>小阮AI助手为您提供浙江省内110所高校的精准导航服务，帮助新生快速适应校园生活</p>
-            <div class="search-box">
-                <input type="text" id="search-input" placeholder="搜索学校、美食、地点...">
-                <select id="search-type">
-                    <option value="school">学校</option>
-                    <option value="food">美食</option>
-                    <option value="scenic">景点</option>
-                    <option value="shopping">购物</option>
-                </select>
-                <button id="search-button"><i class="fas fa-search"></i> 搜索</button>
-            </div>
-        </div>
-    </section>
-
-    <!-- 主内容区域 -->
-    <div class="container">
-        <div class="main-content">
-            <!-- 地图容器 -->
-            <div class="map-container">
-                <div id="map"></div>
-            </div>
-            <!-- 侧边栏 -->
-            <div class="sidebar">
-                <div class="sidebar-header">
-                    <h3><i class="fas fa-compass"></i> 校园导航服务</h3>
-                </div>
-                <div class="sidebar-tabs">
-                    <button class="sidebar-tab active" data-tab="schools">高校列表</button>
-                    <button class="sidebar-tab" data-tab="food">美食推荐</button>
-                    <button class="sidebar-tab" data-tab="ride">打车服务</button>
-                    <button class="sidebar-tab" data-tab="route">出行规划</button>
-                </div>
-                <div class="sidebar-content">
-                    <!-- 高校列表面板 -->
-                    <div class="tab-pane active" id="schools-pane">
-                        <h3><i class="fas fa-university"></i> 浙江省高校列表</h3>
-                        <div class="search-controls">
-                            <input type="text" id="school-search" placeholder="搜索学校..." style="width: 100%; padding: 8px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 4px;">
-                        </div>
-                        <ul class="school-list">
-                            <!-- 学校列表将通过JavaScript动态生成 -->
-                        </ul>
-                    </div>
-                    
-                    <!-- 美食推荐面板 -->
-                    <div class="tab-pane" id="food-pane">
-                        <h3><i class="fas fa-utensils"></i> 校园周边美食</h3>
-                        <div class="search-controls">
-                            <input type="text" id="food-search" placeholder="搜索美食或学校..." style="width: 100%; padding: 8px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 4px;">
-                        </div>
-                        <ul class="food-list">
-                            <!-- 美食列表将通过JavaScript动态生成 -->
-                        </ul>
-                        <div class="food-detail" id="food-detail">
-                            <h4 id="detail-name">美食详情</h4>
-                            <p id="detail-address">地址：</p>
-                            <p id="detail-rating">评分：</p>
-                            <p id="detail-description">描述：</p>
-                            <p id="detail-price">人均消费：</p>
-                            <button class="btn" id="navigate-to-food">
-                                <i class="fas fa-directions"></i> 导航到此处
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <!-- 打车服务面板 -->
-                    <div class="tab-pane" id="ride-pane">
-                        <div class="ride-panel">
-                            <h3><i class="fas fa-taxi"></i> 打车服务</h3>
-                            <p>从 <span id="current-location">当前位置</span> 到 <span id="destination">目的地</span></p>
-                            
-                            <div class="ride-options">
-                                <div class="ride-option" data-type="economy">
-                                    <div class="ride-info">
-                                        <div class="ride-icon">
-                                            <i class="fas fa-car"></i>
-                                        </div>
-                                        <div class="ride-details">
-                                            <h4>经济型</h4>
-                                            <p>普通舒适，性价比高</p>
-                                        </div>
-                                    </div>
-                                    <div class="ride-price">
-                                        <div class="price">¥25-35</div>
-                                        <div class="time">15-20分钟</div>
-                                    </div>
-                                </div>
-                                
-                                <div class="ride-option" data-type="comfort">
-                                    <div class="ride-info">
-                                        <div class="ride-icon">
-                                            <i class="fas fa-car-side"></i>
-                                        </div>
-                                        <div class="ride-details">
-                                            <h4>舒适型</h4>
-                                            <p>空间更大，体验更佳</p>
-                                        </div>
-                                    </div>
-                                    <div class="ride-price">
-                                        <div class="price">¥35-50</div>
-                                        <div class="time">15-20分钟</div>
-                                    </div>
-                                </div>
-                                
-                                <div class="ride-option" data-type="premium">
-                                    <div class="ride-info">
-                                        <div class="ride-icon">
-                                            <i class="fas fa-star"></i>
-                                        </div>
-                                        <div class="ride-details">
-                                            <h4>豪华型</h4>
-                                            <p>高端车型，专属服务</p>
-                                        </div>
-                                    </div>
-                                    <div class="ride-price">
-                                        <div class="price">¥50-70</div>
-                                        <div class="time">15-20分钟</div>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="ride-actions">
-                                <button class="btn" id="call-ride">
-                                    <i class="fas fa-taxi"></i> 花小猪打车
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- 出行规划面板 -->
-                    <div class="tab-pane" id="route-pane">
-                        <div class="route-panel">
-                            <h3><i class="fas fa-route"></i> 出行规划</h3>
-                            
-                            <div class="route-form">
-                                <div class="form-group">
-                                    <label for="trip-type">出行类型</label>
-                                    <select id="trip-type">
-                                        <option value="local">市内出行</option>
-                                        <option value="long">长途旅行</option>
-                                    </select>
-                                </div>
-                                
-                                <div id="local-trip-form">
-                                    <div class="form-group">
-                                        <label for="start-point">起点</label>
-                                        <input type="text" id="start-point" placeholder="请输入起点位置" value="当前位置">
-                                    </div>
-                                    
-                                    <div class="form-group">
-                                        <label for="end-point">终点</label>
-                                        <input type="text" id="end-point" placeholder="请输入终点位置">
-                                    </div>
-                                    
-                                    <div class="route-options">
-                                        <div class="route-option active" data-mode="driving">
-                                            <i class="fas fa-car"></i> 驾车
-                                        </div>
-                                        <div class="route-option" data-mode="transit">
-                                            <i class="fas fa-bus"></i> 公交
-                                        </div>
-                                        <div class="route-option" data-mode="walking">
-                                            <i class="fas fa-walking"></i> 步行
-                                        </div>
-                                        <div class="route-option" data-mode="bicycling">
-                                            <i class="fas fa-bicycle"></i> 骑行
-                                        </div>
-                                    </div>
-                                    
-                                    <button class="btn" id="plan-route">
-                                        <i class="fas fa-directions"></i> 开始规划
-                                    </button>
-                                </div>
-                                
-                                <div id="long-trip-form" style="display: none;">
-                                    <div class="form-group">
-                                        <label for="long-start">出发地</label>
-                                        <input type="text" id="long-start" placeholder="例如：浙江" value="浙江">
-                                    </div>
-                                    
-                                    <div class="form-group">
-                                        <label for="long-destination">目的地</label>
-                                        <input type="text" id="long-destination" placeholder="例如：北京">
-                                    </div>
-                                    
-                                    <div class="form-group">
-                                        <label for="trip-days">旅行天数</label>
-                                        <select id="trip-days">
-                                            <option value="1">1天</option>
-                                            <option value="2">2天</option>
-                                            <option value="3">3天</option>
-                                            <option value="4" selected>4天</option>
-                                            <option value="5">5天</option>
-                                            <option value="7">7天</option>
-                                        </select>
-                                    </div>
-                                    
-                                    <div class="form-group">
-                                        <label for="transport-type">交通方式</label>
-                                        <select id="transport-type">
-                                            <option value="train">高铁/火车</option>
-                                            <option value="flight">飞机</option>
-                                            <option value="bus">长途汽车</option>
-                                            <option value="self-drive">自驾</option>
-                                        </select>
-                                    </div>
-                                    
-                                    <button class="btn" id="plan-long-trip">
-                                        <i class="fas fa-plane"></i> 生成旅行计划
-                                    </button>
-                                </div>
-                            </div>
-                            
-                            <div class="route-result" id="route-result" style="display: none;">
-                                <h4>路线详情</h4>
-                                <div class="route-detail">
-                                    <span>距离:</span>
-                                    <span id="route-distance">--</span>
-                                </div>
-                                <div class="route-detail">
-                                    <span>时间:</span>
-                                    <span id="route-time">--</span>
-                                </div>
-                                <div class="route-detail">
-                                    <span>费用:</span>
-                                    <span id="route-cost">--</span>
-                                </div>
-                            </div>
-                            
-                            <div class="trip-plan" id="long-trip-plan" style="display: none;">
-                                <h4>旅行计划详情</h4>
-                                <!-- 长途旅行计划将通过JavaScript动态生成 -->
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 功能卡片区域 -->
-        <div class="features">
-            <div class="feature-card">
-                <div class="feature-icon">
-                    <i class="fas fa-map-marked-alt"></i>
-                </div>
-                <h3>精准校园导航</h3>
-                <p>提供浙江省内110所高校的精准位置信息，包括教学楼、宿舍、食堂等主要设施的位置导航。</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">
-                    <i class="fas fa-utensils"></i>
-                </div>
-                <h3>周边生活服务</h3>
-                <p>展示校园周边的餐饮、购物、娱乐等生活服务设施，帮助新生快速适应校园生活。</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">
-                    <i class="fas fa-route"></i>
-                </div>
-                <h3>智能路径规划</h3>
-                <p>根据您的需求提供最优路径规划，支持步行、骑行、公交等多种出行方式。</p>
-            </div>
-        </div>
+  <!-- 导航栏 -->
+  <nav class="navbar">
+    <div class="navbar-inner">
+      <div class="logo" onclick="navigateTo('home')"><div class="icon">🎓</div>校园生活</div>
+      <div class="nav-links">
+        <button onclick="navigateTo('home')" data-page="home" class="active" id="nav-home">🏠 首页</button>
+        <button onclick="navigateTo('forum')" data-page="forum" id="nav-forum">💬 论坛</button>
+        <button onclick="navigateTo('market')" data-page="market" id="nav-market">🛒 市场</button>
+        <button onclick="navigateTo('recycle')" data-page="recycle" id="nav-recycle">♻️ 回收</button>
+      </div>
+      <div class="user-area" id="userArea">
+        <span id="notLoggedIn"><button class="btn-sm btn-login" onclick="openLoginModal()">🔑 微信登录</button></span>
+        <span id="loggedIn" style="display:none;"><span id="userNameDisplay"></span><span id="adminBadgePlaceholder"></span><button class="btn-sm btn-logout" onclick="logout()">退出</button></span>
+      </div>
     </div>
+  </nav>
 
-    <!-- 页脚区域 -->
-    <footer>
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-section">
-                    <h3>关于小阮</h3>
-                    <p>校园生活AI助手小阮是一款基于钉钉AI生产力平台深度开发的校园生活智能助理，为浙江工业职业技术学院入学新生量身打造。</p>
-                </div>
-                <div class="footer-section">
-                    <h3>快速链接</h3>
-                    <a href="#">首页</a>
-                    <a href="#">校园导航</a>
-                    <a href="#">生活服务</a>
-                    <a href="#">职业规划</a>
-                </div>
-                <div class="footer-section">
-                    <h3>联系我们</h3>
-                    <p><i class="fas fa-map-marker-alt"></i> 浙江省绍兴市越城区曲屯路151号</p>
-                    <p><i class="fas fa-phone"></i> 0575-88000000</p>
-                    <p><i class="fas fa-envelope"></i> contact@xiaoruan.ai</p>
-                </div>
-            </div>
-            <div class="copyright">
-                <p>&copy; 2023 小阮AI助手 - 浙江省校园导航系统 | 基于高德地图API开发</p>
-            </div>
+  <div class="main-container">
+    <div class="page active" id="page-home">
+      <h2 style="text-align:center;margin:20px 0;">👋 欢迎来到校园生活平台</h2>
+      <div class="card"><div class="card-header">📢 最新动态</div><div id="homeLatestPosts">加载中...</div></div>
+    </div>
+    <div class="page" id="page-forum">
+      <div class="card">
+        <div class="card-header"><span>💬 校园论坛</span><button class="btn btn-primary btn-sm" onclick="showForumForm()">📝 发布新帖</button></div>
+        <div id="forumForm" style="display:none;">
+          <div class="form-group"><label>标题</label><input type="text" id="forumTitle"></div>
+          <div class="form-group"><label>内容</label><textarea id="forumContent"></textarea></div>
+          <div class="form-group"><label>分类</label><select id="forumCategory"><option>学习交流</option><option>生活闲聊</option><option>校园通知</option><option>求助问答</option></select></div>
+          <div class="form-group"><label>📎 上传图片/视频</label><input type="file" id="forumMediaInput" accept="image/*,video/*" multiple onchange="previewMedia('forum')"><div class="media-preview" id="forumMediaPreview"></div></div>
+          <button class="btn btn-primary" onclick="submitForumPost()">发布</button>
+          <button class="btn btn-outline" onclick="hideForumForm()">取消</button>
         </div>
-    </footer>
+        <div id="forumPostsList"><div class="empty-state">暂无帖子</div></div>
+      </div>
+    </div>
+    <div class="page" id="page-market">
+      <div class="card">
+        <div class="card-header"><span>🛒 租买市场</span><button class="btn btn-primary btn-sm" onclick="showMarketForm()">📦 发布物品</button></div>
+        <div id="marketForm" style="display:none;">
+          <div class="form-group"><label>物品名称</label><input type="text" id="marketTitle"></div>
+          <div class="form-group"><label>描述</label><textarea id="marketDesc"></textarea></div>
+          <div class="form-group"><label>类型</label><select id="marketType"><option value="sell">出售</option><option value="rent">租用</option></select></div>
+          <div class="form-group"><label>价格(元)</label><input type="number" id="marketPrice"></div>
+          <div class="form-group"><label>分类</label><select id="marketCategory"><option>衣物</option><option>书籍</option><option>电子产品</option><option>其他</option></select></div>
+          <div class="form-group"><label>📎 上传图片/视频</label><input type="file" id="marketMediaInput" accept="image/*,video/*" multiple onchange="previewMedia('market')"><div class="media-preview" id="marketMediaPreview"></div></div>
+          <button class="btn btn-primary" onclick="submitMarketItem()">发布</button>
+          <button class="btn btn-outline" onclick="hideMarketForm()">取消</button>
+        </div>
+        <div id="marketItemsList"><div class="empty-state">暂无物品</div></div>
+      </div>
+    </div>
+    <div class="page" id="page-recycle">
+      <div class="card">
+        <div class="card-header"><span>♻️ 杂物回收</span><button class="btn btn-primary btn-sm" onclick="showRecycleForm()">📦 发布回收</button></div>
+        <div id="recycleForm" style="display:none;">
+          <div class="form-group"><label>物品名称</label><input type="text" id="recycleTitle"></div>
+          <div class="form-group"><label>描述</label><textarea id="recycleDesc"></textarea></div>
+          <div class="form-group"><label>分类</label><select id="recycleCategory"><option>纸张</option><option>塑料</option><option>电子产品</option><option>衣物</option><option>金属</option><option>其他</option></select></div>
+          <div class="form-group"><label>📎 上传图片/视频</label><input type="file" id="recycleMediaInput" accept="image/*,video/*" multiple onchange="previewMedia('recycle')"><div class="media-preview" id="recycleMediaPreview"></div></div>
+          <button class="btn btn-primary" onclick="submitRecycleItem()">发布</button>
+          <button class="btn btn-outline" onclick="hideRecycleForm()">取消</button>
+        </div>
+        <div id="recycleItemsList"><div class="empty-state">暂无回收信息</div></div>
+      </div>
+    </div>
+    <div class="page" id="page-admin">
+      <div class="card"><div class="card-header">🛡️ 管理员面板</div><div id="adminContentArea">选择管理功能</div></div>
+    </div>
+  </div>
 
-    <!-- 高德地图API -->
-    <script src="https://webapi.amap.com/maps?v=1.4.15&key=7382166dc9b4b1fe99bc1a919c5fd803"></script>
-    <script src="https://webapi.amap.com/ui/1.1/main.js"></script>
-    <!-- JavaScript功能实现 -->
-    <script>
-        // 初始化地图
-        var map = new AMap.Map('map', {
-            zoom: 11,
-            center: [120.582916, 30.048683], // 绍兴市中心坐标
-            viewMode: '3D'
-        });
+  <!-- 市场物品详情+聊天+支付模态框 -->
+  <div class="modal-overlay" id="marketDetailOverlay" style="display:none;">
+    <div class="modal" id="marketDetailModal">
+      <button class="modal-close" onclick="closeMarketDetail()">✕</button>
+      <div id="marketDetailContent"></div>
+    </div>
+  </div>
 
-        // 学校数据 - 浙江省110所大学
-        var schools = [
-            {id: 1, name: "浙江工业职业技术学院", position: [120.605839, 30.064339], address: "绍兴市越城区曲屯路151号", city: "绍兴"},
-            {id: 2, name: "浙江大学", position: [120.088587, 30.274084], address: "杭州市西湖区余杭塘路866号", city: "杭州"},
-            {id: 3, name: "浙江工业大学", position: [120.046667, 30.231111], address: "杭州市西湖区留和路288号", city: "杭州"},
-            {id: 4, name: "杭州电子科技大学", position: [120.369444, 30.310278], address: "杭州市钱塘区白杨街道2号大街1158号", city: "杭州"},
-            {id: 5, name: "浙江理工大学", position: [120.372222, 30.311111], address: "杭州市钱塘区2号大街928号", city: "杭州"},
-            {id: 6, name: "浙江工商大学", position: [120.386111, 30.305556], address: "杭州市钱塘区学正街18号", city: "杭州"},
-            {id: 7, name: "浙江财经大学", position: [120.388889, 30.308333], address: "杭州市钱塘区学源街18号", city: "杭州"},
-            {id: 8, name: "浙江师范大学", position: [119.647222, 29.075556], address: "金华市婺城区迎宾大道688号", city: "金华"},
-            {id: 9, name: "宁波大学", position: [121.544722, 29.911111], address: "宁波市江北区风华路818号", city: "宁波"},
-            {id: 10, name: "温州医科大学", position: [120.675, 27.975], address: "温州市瓯海区茶山高教园区", city: "温州"},
-            {id: 11, name: "浙江农林大学", position: [119.726, 30.236], address: "杭州市临安区武肃街666号", city: "杭州"},
-            {id: 12, name: "浙江中医药大学", position: [120.158, 30.179], address: "杭州市滨江区滨文路548号", city: "杭州"},
-            {id: 13, name: "中国计量大学", position: [120.367, 30.322], address: "杭州市钱塘区学源街258号", city: "杭州"},
-            {id: 14, name: "浙江万里学院", position: [121.560, 29.852], address: "宁波市鄞州区钱湖南路8号", city: "宁波"},
-            {id: 15, name: "浙江科技学院", position: [120.046, 30.230], address: "杭州市西湖区留和路318号", city: "杭州"},
-            // 这里只展示部分学校数据，实际代码中应包含110所学校
-            // 为节省篇幅，以下用循环生成模拟数据
-        ];
+  <!-- 登录模态框 -->
+  <div class="modal-overlay" id="loginModalOverlay" style="display:none;">
+    <div class="modal">
+      <button class="modal-close" onclick="closeLoginModal()">✕</button>
+      <h3>微信扫码登录</h3>
+      <div style="padding:20px;background:#f0f0f0;border-radius:12px;margin:10px 0;">📱 扫码演示</div>
+      <button class="btn btn-primary" onclick="simulateWechatLogin()">模拟扫码登录</button>
+      <button class="btn btn-outline" onclick="showAdminLogin()" style="margin-top:8px;">管理员密码登录</button>
+      <div id="adminLoginArea" style="display:none;margin-top:12px;">
+        <input type="text" id="adminUser" placeholder="用户名" style="width:100%;margin-bottom:6px;">
+        <input type="password" id="adminPwd" placeholder="密码" style="width:100%;margin-bottom:6px;">
+        <button class="btn btn-primary" onclick="adminLogin()">登录</button>
+      </div>
+    </div>
+  </div>
 
-        // 生成剩余学校数据
-        for (let i = 16; i <= 110; i++) {
-            const cities = ["杭州", "宁波", "温州", "绍兴", "金华", "嘉兴", "台州", "湖州", "衢州", "舟山", "丽水"];
-            const city = cities[Math.floor(Math.random() * cities.length)];
-            const name = "浙江" + ["工业", "理工", "科技", "师范", "医药", "财经", "工商", "农林", "艺术", "传媒"][Math.floor(Math.random() * 10)] + "大学" + (i > 20 ? "分校" : "");
-            
-            // 根据城市生成大致坐标
-            let position;
-            switch(city) {
-                case "杭州": position = [120.1 + Math.random() * 0.3, 30.2 + Math.random() * 0.2]; break;
-                case "宁波": position = [121.5 + Math.random() * 0.2, 29.8 + Math.random() * 0.2]; break;
-                case "温州": position = [120.6 + Math.random() * 0.2, 27.9 + Math.random() * 0.2]; break;
-                case "绍兴": position = [120.5 + Math.random() * 0.2, 30.0 + Math.random() * 0.2]; break;
-                case "金华": position = [119.6 + Math.random() * 0.2, 29.0 + Math.random() * 0.2]; break;
-                case "嘉兴": position = [120.7 + Math.random() * 0.2, 30.7 + Math.random() * 0.2]; break;
-                case "台州": position = [121.4 + Math.random() * 0.2, 28.6 + Math.random() * 0.2]; break;
-                case "湖州": position = [120.0 + Math.random() * 0.2, 30.8 + Math.random() * 0.2]; break;
-                case "衢州": position = [118.8 + Math.random() * 0.2, 28.9 + Math.random() * 0.2]; break;
-                case "舟山": position = [122.1 + Math.random() * 0.2, 30.0 + Math.random() * 0.2]; break;
-                case "丽水": position = [119.9 + Math.random() * 0.2, 28.4 + Math.random() * 0.2]; break;
-            }
-            
-            schools.push({
-                id: i,
-                name: name,
-                position: position,
-                address: city + "市" + ["大学城", "高教园区", "科技园区", "文化区"][Math.floor(Math.random() * 4)] + "学府路" + (100 + i),
-                city: city
-            });
+  <!-- Toast容器 -->
+  <div id="toastContainer"></div>
+
+  <script>
+    const STORAGE_KEY = 'campus_platform_v3';
+    const DEFAULT_ADMIN = { id:'admin_001', username:'admin', password:'admin123', role:'admin', avatar:'🛡️', wechatNickname:'管理员' };
+
+    function getData() {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if(raw) try { return JSON.parse(raw); } catch(e) {}
+      return initData();
+    }
+    function initData() {
+      const data = {
+        users: [DEFAULT_ADMIN],
+        forumPosts: [],
+        marketItems: [],
+        recycleItems: [],
+        currentUserId: null
+      };
+      const u = { id:'u1', username:'sample', password:'', role:'user', avatar:'👩', wechatNickname:'小明同学' };
+      data.users.push(u);
+      data.forumPosts.push({
+        id:'p1', userId:'u1', username:'小明同学', avatar:'👩',
+        title:'图书馆开放时间', content:'听说延长到11点', category:'校园通知',
+        date:new Date().toISOString(), comments:[], media:[]
+      });
+      data.marketItems.push({
+        id:'m1', userId:'u1', username:'小明同学', avatar:'👩',
+        title:'冬季羽绒服', description:'M码，很新，只穿过一次。', type:'sell', price:180,
+        category:'衣物', date:new Date().toISOString(), media:[],
+        chatMessages: [], paymentStatus: null
+      });
+      data.marketItems.push({
+        id:'m2', userId:'admin_001', username:'管理员', avatar:'🛡️',
+        title:'高等数学教材(可租)', description:'同济版，租用一学期。', type:'rent', price:5,
+        category:'书籍', date:new Date().toISOString(), media:[],
+        chatMessages: [], paymentStatus: null
+      });
+      data.recycleItems.push({
+        id:'r1', userId:'u1', username:'小明同学', avatar:'👩',
+        title:'旧报纸', description:'5公斤', category:'纸张',
+        date:new Date().toISOString(), media:[]
+      });
+      saveData(data);
+      return data;
+    }
+    function saveData(data) { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
+    function getCurrentUser() { const d=getData(); return d.currentUserId ? d.users.find(u=>u.id===d.currentUserId) : null; }
+    function isAdmin() { const u=getCurrentUser(); return u && u.role==='admin'; }
+
+    let selectedMedia = { forum:[], market:[], recycle:[] };
+
+    function previewMedia(type) {
+      const input = document.getElementById(type+'MediaInput');
+      const preview = document.getElementById(type+'MediaPreview');
+      if(!input.files) return;
+      selectedMedia[type] = [];
+      preview.innerHTML = '';
+      Array.from(input.files).forEach((file, idx)=>{
+        if(file.size > 15*1024*1024) { showToast('文件过大(最大15MB)','error'); return; }
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          selectedMedia[type].push({ name:file.name, type:file.type, data:e.target.result });
+          const div = document.createElement('div'); div.className='media-item';
+          if(file.type.startsWith('image/')) div.innerHTML = `<img src="${e.target.result}"><button class="remove-media" onclick="removeMedia('${type}',${idx})">x</button>`;
+          else if(file.type.startsWith('video/')) div.innerHTML = `<video src="${e.target.result}" controls></video><button class="remove-media" onclick="removeMedia('${type}',${idx})">x</button>`;
+          preview.appendChild(div);
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+    function removeMedia(type, idx) {
+      selectedMedia[type].splice(idx,1);
+      document.getElementById(type+'MediaPreview').children[idx]?.remove();
+    }
+
+    function showToast(msg, cls='') {
+      const t = document.createElement('div'); t.className='toast '+cls; t.textContent=msg;
+      document.getElementById('toastContainer').appendChild(t);
+      setTimeout(()=>t.remove(), 2000);
+    }
+
+    function openLoginModal() { document.getElementById('loginModalOverlay').style.display='flex'; }
+    function closeLoginModal() { document.getElementById('loginModalOverlay').style.display='none'; }
+    function simulateWechatLogin() {
+      const names=['小明','小红','小刚']; const r=names[Math.floor(Math.random()*names.length)];
+      const data=getData(); let user=data.users.find(u=>u.wechatNickname===r && u.role==='user');
+      if(!user) { user={ id:'u'+Date.now(), username:'wx_'+r, password:'', role:'user', avatar:'👤', wechatNickname:r }; data.users.push(user); }
+      data.currentUserId=user.id; saveData(data); closeLoginModal(); updateUI(); refreshAll(); showToast('登录成功','success');
+    }
+    function showAdminLogin() { document.getElementById('adminLoginArea').style.display='block'; }
+    function adminLogin() {
+      const u=document.getElementById('adminUser').value.trim(), p=document.getElementById('adminPwd').value.trim();
+      const data=getData(); const admin=data.users.find(x=>x.username===u && x.password===p && x.role==='admin');
+      if(admin) { data.currentUserId=admin.id; saveData(data); closeLoginModal(); updateUI(); refreshAll(); showToast('管理员登录成功','success'); }
+      else showToast('账号或密码错误','error');
+    }
+    function logout() { const d=getData(); d.currentUserId=null; saveData(d); updateUI(); navigateTo('home'); }
+
+    function updateUI() {
+      const user=getCurrentUser();
+      document.getElementById('notLoggedIn').style.display=user?'none':'inline';
+      document.getElementById('loggedIn').style.display=user?'inline-flex':'none';
+      if(user) {
+        document.getElementById('userNameDisplay').textContent=user.wechatNickname||user.username;
+        document.getElementById('adminBadgePlaceholder').innerHTML=user.role==='admin'?'<span class="btn-admin-badge">管理员</span>':'';
+      }
+      const adminBtn = document.getElementById('nav-admin');
+      if(isAdmin()) {
+        if(!adminBtn) {
+          const btn=document.createElement('button'); btn.id='nav-admin'; btn.setAttribute('data-page','admin');
+          btn.innerHTML='🛡️ 管理'; btn.onclick=()=>navigateTo('admin');
+          document.querySelector('.nav-links').appendChild(btn);
         }
+      } else { if(adminBtn) adminBtn.style.display='none'; }
+    }
 
-        // 美食数据 - 为每所学校生成2-4个周边美食
-        var foods = [];
-        
-        // 美食类型和名称模板
-        const foodTypes = ["中餐", "西餐", "日料", "韩餐", "火锅", "烧烤", "快餐", "咖啡", "甜点", "小吃"];
-        const foodNames = [
-            "学苑餐厅", "校园咖啡厅", "风味小吃街", "留学生餐厅", "美食广场", 
-            "食堂", "美食城", "校园餐厅", "特色小吃", "快餐店",
-            "火锅店", "烧烤摊", "西餐厅", "日料店", "韩式料理",
-            "甜品店", "奶茶店", "面包房", "面馆", "饺子馆"
-        ];
-        const foodDescriptions = [
-            "校园内最受欢迎的餐厅，提供各种中式快餐和特色小吃",
-            "环境优雅的咖啡厅，适合学习和休闲",
-            "汇集各地特色小吃，价格实惠，深受学生喜爱",
-            "提供中西式餐点，环境舒适，菜品丰富",
-            "多种美食选择，包括火锅、烧烤、日料等",
-            "校园内的主要食堂，提供经济实惠的餐点",
-            "大型美食集合地，各种口味应有尽有",
-            "校园特色餐厅，提供地方特色菜肴",
-            "专门提供各地小吃的店铺，口味地道",
-            "快速便捷的餐饮选择，适合忙碌的学生"
-        ];
-        
-        // 为每所学校生成美食
-        schools.forEach(school => {
-            const foodCount = 2 + Math.floor(Math.random() * 3); // 每所学校2-4个美食
-            
-            for (let i = 0; i < foodCount; i++) {
-                const foodType = foodTypes[Math.floor(Math.random() * foodTypes.length)];
-                const foodName = foodNames[Math.floor(Math.random() * foodNames.length)];
-                const foodDescription = foodDescriptions[Math.floor(Math.random() * foodDescriptions.length)];
-                
-                // 生成与学校位置相近的坐标
-                const position = [
-                    school.position[0] + (Math.random() - 0.5) * 0.01,
-                    school.position[1] + (Math.random() - 0.5) * 0.01
-                ];
-                
-                // 生成评分和价格
-                const rating = (3.5 + Math.random() * 1.5).toFixed(1);
-                const priceRange = ["¥10-20", "¥15-25", "¥20-35", "¥25-40", "¥30-50"][Math.floor(Math.random() * 5)];
-                
-                foods.push({
-                    name: school.name + foodName,
-                    position: position,
-                    address: school.address + "附近",
-                    rating: parseFloat(rating),
-                    type: foodType,
-                    description: foodDescription,
-                    price: priceRange,
-                    schoolId: school.id,
-                    schoolName: school.name
-                });
-            }
-        });
+    function navigateTo(page) {
+      document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+      document.getElementById('page-'+page).classList.add('active');
+      document.querySelectorAll('.nav-links button').forEach(b=>b.classList.remove('active'));
+      const btn=document.getElementById('nav-'+page); if(btn) btn.classList.add('active');
+      refreshAll(); window.scrollTo(0,0);
+    }
 
-        // 创建信息窗口
-        var infoWindow = new AMap.InfoWindow({
-            offset: new AMap.Pixel(0, -30)
-        });
+    function showForumForm() { if(!getCurrentUser()){ openLoginModal(); return; } document.getElementById('forumForm').style.display='block'; }
+    function hideForumForm() { document.getElementById('forumForm').style.display='none'; }
+    function submitForumPost() {
+      const user=getCurrentUser(); if(!user) return;
+      const title=document.getElementById('forumTitle').value.trim(), content=document.getElementById('forumContent').value.trim();
+      if(!title||!content) return showToast('请填写完整','error');
+      const data=getData();
+      data.forumPosts.unshift({ id:'p'+Date.now(), userId:user.id, username:user.wechatNickname, avatar:user.avatar, title, content, category:document.getElementById('forumCategory').value, date:new Date().toISOString(), comments:[], media:selectedMedia.forum });
+      saveData(data); hideForumForm(); selectedMedia.forum=[]; document.getElementById('forumMediaPreview').innerHTML=''; refreshAll(); showToast('发布成功','success');
+    }
 
-        // 添加学校标记点
-        for (var i = 0; i < schools.length; i++) {
-            var marker = new AMap.Marker({
-                position: schools[i].position,
-                map: map,
-                title: schools[i].name,
-                icon: 'https://webapi.amap.com/theme/v1.3/markers/n/mark_b.png'
-            });
-            
-            // 标记点点击事件
-            marker.on('click', function(e) {
-                var school = schools.find(s => s.position[0] === e.target.getPosition().lng && s.position[1] === e.target.getPosition().lat);
-                infoWindow.setContent(`
-                    <div style="padding: 10px;">
-                        <h3 style="margin: 0 0 5px 0; color: #1a6dcc;">${school.name}</h3>
-                        <p style="margin: 0; color: #666;">${school.address}</p>
-                        <button style="margin-top: 10px; padding: 5px 10px; background: #1a6dcc; color: white; border: none; border-radius: 4px; cursor: pointer;" onclick="setDestination('${school.name}')">设为目的地</button>
-                    </div>
-                `);
-                infoWindow.open(map, e.target.getPosition());
-            });
-        }
+    function showMarketForm() { if(!getCurrentUser()){ openLoginModal(); return; } document.getElementById('marketForm').style.display='block'; }
+    function hideMarketForm() { document.getElementById('marketForm').style.display='none'; }
+    function submitMarketItem() {
+      const user=getCurrentUser(); if(!user) return;
+      const title=document.getElementById('marketTitle').value.trim(), desc=document.getElementById('marketDesc').value.trim();
+      if(!title||!desc) return showToast('请填写完整','error');
+      const data=getData();
+      data.marketItems.unshift({ id:'m'+Date.now(), userId:user.id, username:user.wechatNickname, avatar:user.avatar, title, description:desc, type:document.getElementById('marketType').value, price:parseFloat(document.getElementById('marketPrice').value)||0, category:document.getElementById('marketCategory').value, date:new Date().toISOString(), media:selectedMedia.market, chatMessages:[], paymentStatus:null });
+      saveData(data); hideMarketForm(); selectedMedia.market=[]; document.getElementById('marketMediaPreview').innerHTML=''; refreshAll(); showToast('发布成功','success');
+    }
 
-        // 添加美食标记点
-        for (var i = 0; i < foods.length; i++) {
-            var marker = new AMap.Marker({
-                position: foods[i].position,
-                map: map,
-                title: foods[i].name,
-                icon: 'https://webapi.amap.com/theme/v1.3/markers/n/mark_r.png'
-            });
-            
-            // 标记点点击事件
-            marker.on('click', function(e) {
-                var food = foods.find(f => f.position[0] === e.target.getPosition().lng && f.position[1] === e.target.getPosition().lat);
-                infoWindow.setContent(`
-                    <div style="padding: 10px;">
-                        <h3 style="margin: 0 0 5px 0; color: #1a6dcc;">${food.name}</h3>
-                        <p style="margin: 0; color: #666;">${food.address}</p>
-                        <div style="margin: 5px 0; color: #ffc107;">
-                            ${getStarRating(food.rating)}
-                            <span style="color: #666; margin-left: 5px;">${food.rating}</span>
-                        </div>
-                        <button style="margin-top: 10px; padding: 5px 10px; background: #1a6dcc; color: white; border: none; border-radius: 4px; cursor: pointer;" onclick="setDestination('${food.name}')">设为目的地</button>
-                    </div>
-                `);
-                infoWindow.open(map, e.target.getPosition());
-            });
-        }
+    function showRecycleForm() { if(!getCurrentUser()){ openLoginModal(); return; } document.getElementById('recycleForm').style.display='block'; }
+    function hideRecycleForm() { document.getElementById('recycleForm').style.display='none'; }
+    function submitRecycleItem() {
+      const user=getCurrentUser(); if(!user) return;
+      const title=document.getElementById('recycleTitle').value.trim(), desc=document.getElementById('recycleDesc').value.trim();
+      if(!title||!desc) return showToast('请填写完整','error');
+      const data=getData();
+      data.recycleItems.unshift({ id:'r'+Date.now(), userId:user.id, username:user.wechatNickname, avatar:user.avatar, title, description:desc, category:document.getElementById('recycleCategory').value, date:new Date().toISOString(), media:selectedMedia.recycle });
+      saveData(data); hideRecycleForm(); selectedMedia.recycle=[]; document.getElementById('recycleMediaPreview').innerHTML=''; refreshAll(); showToast('发布成功','success');
+    }
 
-        // 生成星级评分
-        function getStarRating(rating) {
-            let stars = '';
-            const fullStars = Math.floor(rating);
-            const halfStar = rating % 1 >= 0.5;
-            
-            for (let i = 0; i < fullStars; i++) {
-                stars += '<i class="fas fa-star"></i>';
-            }
-            
-            if (halfStar) {
-                stars += '<i class="fas fa-star-half-alt"></i>';
-            }
-            
-            const emptyStars = 5 - Math.ceil(rating);
-            for (let i = 0; i < emptyStars; i++) {
-                stars += '<i class="far fa-star"></i>';
-            }
-            
-            return stars;
-        }
+    function renderMedia(mediaArray) {
+      if(!mediaArray||!mediaArray.length) return '';
+      return '<div style="display:flex;gap:6px;flex-wrap:wrap;margin:8px 0;">'+mediaArray.map(m=>{
+        if(m.type.startsWith('image/')) return `<div style="width:70px;height:70px;border-radius:8px;overflow:hidden;"><img src="${m.data}" style="width:100%;height:100%;object-fit:cover;"></div>`;
+        else if(m.type.startsWith('video/')) return `<div style="width:120px;height:70px;"><video src="${m.data}" controls style="width:100%;height:100%;"></video></div>`;
+        return '';
+      }).join('')+'</div>';
+    }
 
-        // 侧边栏选项卡切换
-        var sidebarTabs = document.querySelectorAll('.sidebar-tab');
-        var tabPanes = document.querySelectorAll('.tab-pane');
-        
-        sidebarTabs.forEach(function(tab) {
-            tab.addEventListener('click', function() {
-                var tabId = this.getAttribute('data-tab');
-                
-                // 移除所有active类
-                sidebarTabs.forEach(function(t) {
-                    t.classList.remove('active');
-                });
-                tabPanes.forEach(function(pane) {
-                    pane.classList.remove('active');
-                });
-                
-                // 添加active类到当前选项卡和面板
-                this.classList.add('active');
-                document.getElementById(tabId + '-pane').classList.add('active');
-                
-                // 如果是美食面板，生成美食列表
-                if (tabId === 'food') {
-                    generateFoodList();
-                } else if (tabId === 'schools') {
-                    generateSchoolList();
-                }
-            });
-        });
+    function refreshForumView() {
+      const data=getData(); const c=document.getElementById('forumPostsList');
+      if(!data.forumPosts.length) { c.innerHTML='<div class="empty-state">暂无帖子</div>'; return; }
+      c.innerHTML=data.forumPosts.map(p=>`<div class="card"><div><span class="badge badge-forum">${p.category}</span> ${p.title}</div><p>${p.content}</p>${renderMedia(p.media)}<small>${p.username} · ${new Date(p.date).toLocaleString()}</small>${(isAdmin()||getCurrentUser()?.id===p.userId)?`<button class="btn-sm btn-danger" onclick="deletePost('forum','${p.id}')">删除</button>`:''}</div>`).join('');
+    }
+    function refreshMarketView() {
+      const data=getData(); const c=document.getElementById('marketItemsList');
+      if(!data.marketItems.length) { c.innerHTML='<div class="empty-state">暂无物品</div>'; return; }
+      c.innerHTML='<div class="grid-2">'+data.marketItems.map(i=>{
+        const typeBadge = i.type==='rent' ? 'badge-rent' : 'badge-sell';
+        const typeText = i.type==='rent' ? '租用' : '出售';
+        return `<div class="card" style="cursor:pointer;" onclick="openMarketDetail('${i.id}')">
+          <div><span class="badge ${typeBadge}">${typeText}</span> <strong>${i.title}</strong></div>
+          <p>${i.description} · ¥${i.price}</p>
+          ${renderMedia(i.media)}
+          <small>${i.username}</small>
+          ${(isAdmin()||getCurrentUser()?.id===i.userId)?`<button class="btn-sm btn-danger" style="position:relative;z-index:10;" onclick="event.stopPropagation();deletePost('market','${i.id}')">删除</button>`:''}
+          ${i.paymentStatus==='paid' ? '<span style="color:green;margin-left:8px;">✔️ 已交易</span>' : ''}
+        </div>`;
+      }).join('')+'</div>';
+    }
+    function refreshRecycleView() {
+      const data=getData(); const c=document.getElementById('recycleItemsList');
+      if(!data.recycleItems.length) { c.innerHTML='<div class="empty-state">暂无回收</div>'; return; }
+      c.innerHTML='<div class="grid-2">'+data.recycleItems.map(i=>`<div class="card"><span class="badge badge-recycle">${i.category}</span> ${i.title}<p>${i.description}</p>${renderMedia(i.media)}<small>${i.username}</small>${(isAdmin()||getCurrentUser()?.id===i.userId)?`<button class="btn-sm btn-danger" onclick="deletePost('recycle','${i.id}')">删除</button>`:''}</div>`).join('')+'</div>';
+    }
+    function deletePost(type, id) {
+      const data=getData();
+      if(type==='forum') data.forumPosts=data.forumPosts.filter(x=>x.id!==id);
+      else if(type==='market') data.marketItems=data.marketItems.filter(x=>x.id!==id);
+      else if(type==='recycle') data.recycleItems=data.recycleItems.filter(x=>x.id!==id);
+      saveData(data); refreshAll(); showToast('已删除');
+    }
+    function refreshHomeLatest() {
+      const data=getData(); const all=[];
+      data.forumPosts.slice(0,3).forEach(p=>all.push({t:'论坛',txt:p.title}));
+      data.marketItems.slice(0,2).forEach(i=>all.push({t:'市场',txt:i.title}));
+      data.recycleItems.slice(0,2).forEach(i=>all.push({t:'回收',txt:i.title}));
+      document.getElementById('homeLatestPosts').innerHTML=all.length?all.map(a=>`<div>【${a.t}】${a.txt}</div>`).join(''):'暂无动态';
+    }
+    function refreshAll() { refreshForumView(); refreshMarketView(); refreshRecycleView(); refreshHomeLatest(); updateUI(); }
 
-        // 生成学校列表
-        function generateSchoolList() {
-            var schoolList = document.querySelector('.school-list');
-            schoolList.innerHTML = '';
-            
-            // 获取搜索关键词
-            var searchTerm = document.getElementById('school-search').value.toLowerCase();
-            
-            // 过滤学校
-            var filteredSchools = schools.filter(school => 
-                school.name.toLowerCase().includes(searchTerm) || 
-                school.address.toLowerCase().includes(searchTerm) ||
-                school.city.toLowerCase().includes(searchTerm)
-            );
-            
-            // 显示前50所学校（避免列表过长）
-            var displaySchools = filteredSchools.slice(0, 50);
-            
-            displaySchools.forEach(function(school, index) {
-                var schoolItem = document.createElement('li');
-                schoolItem.className = 'school-item';
-                if (index === 0) schoolItem.classList.add('active');
-                schoolItem.setAttribute('data-school', school.id);
-                schoolItem.innerHTML = `
-                    <div class="school-name">${school.name}</div>
-                    <div class="school-address">${school.address}</div>
-                `;
-                
-                schoolItem.addEventListener('click', function() {
-                    // 移除所有active类
-                    document.querySelectorAll('.school-item').forEach(function(el) {
-                        el.classList.remove('active');
-                    });
-                    // 添加active类到当前项
-                    this.classList.add('active');
-                    
-                    // 移动地图到对应学校
-                    map.setCenter(school.position);
-                    map.setZoom(15);
-                    
-                    // 打开信息窗口
-                    infoWindow.setContent(`
-                        <div style="padding: 10px;">
-                            <h3 style="margin: 0 0 5px 0; color: #1a6dcc;">${school.name}</h3>
-                            <p style="margin: 0; color: #666;">${school.address}</p>
-                            <button style="margin-top: 10px; padding: 5px 10px; background: #1a6dcc; color: white; border: none; border-radius: 4px; cursor: pointer;" onclick="setDestination('${school.name}')">设为目的地</button>
-                        </div>
-                    `);
-                    infoWindow.open(map, school.position);
-                });
-                
-                schoolList.appendChild(schoolItem);
-            });
-            
-            // 如果搜索结果超过50所，显示提示
-            if (filteredSchools.length > 50) {
-                var moreItem = document.createElement('li');
-                moreItem.className = 'school-item';
-                moreItem.style.textAlign = 'center';
-                moreItem.style.color = '#666';
-                moreItem.innerHTML = `还有 ${filteredSchools.length - 50} 所学校，请使用搜索功能查找特定学校`;
-                schoolList.appendChild(moreItem);
-            }
-        }
+    // ========== 市场详情 & 聊天 & 支付 ==========
+    function openMarketDetail(itemId) {
+      if(!getCurrentUser()) { showToast('请先登录查看详情','error'); openLoginModal(); return; }
+      const data = getData();
+      const item = data.marketItems.find(i=>i.id===itemId);
+      if(!item) return;
+      const overlay = document.getElementById('marketDetailOverlay');
+      const content = document.getElementById('marketDetailContent');
+      const user = getCurrentUser();
+      const isOwner = (user.id === item.userId);
+      const paid = item.paymentStatus === 'paid';
 
-        // 生成美食列表
-        function generateFoodList() {
-            var foodList = document.querySelector('.food-list');
-            foodList.innerHTML = '';
-            
-            // 获取搜索关键词
-            var searchTerm = document.getElementById('food-search').value.toLowerCase();
-            
-            // 过滤美食
-            var filteredFoods = foods.filter(food => 
-                food.name.toLowerCase().includes(searchTerm) || 
-                food.address.toLowerCase().includes(searchTerm) ||
-                food.type.toLowerCase().includes(searchTerm) ||
-                food.schoolName.toLowerCase().includes(searchTerm)
-            );
-            
-            // 显示前50个美食（避免列表过长）
-            var displayFoods = filteredFoods.slice(0, 50);
-            
-            displayFoods.forEach(function(food, index) {
-                var foodItem = document.createElement('li');
-                foodItem.className = 'food-item';
-                foodItem.setAttribute('data-food', food.schoolId);
-                foodItem.innerHTML = `
-                    <div class="food-name">${food.name}</div>
-                    <div class="food-address">${food.address}</div>
-                    <div class="food-rating">
-                        <span class="stars">${getStarRating(food.rating)}</span>
-                        <span>${food.rating}</span>
-                    </div>
-                `;
-                
-                foodItem.addEventListener('click', function() {
-                    // 移动地图到对应美食点
-                    map.setCenter(food.position);
-                    map.setZoom(16);
-                    
-                    // 显示美食详情
-                    showFoodDetail(food);
-                    
-                    // 打开信息窗口
-                    infoWindow.setContent(`
-                        <div style="padding: 10px;">
-                            <h3 style="margin: 0 0 5px 0; color: #1a6dcc;">${food.name}</h3>
-                            <p style="margin: 0; color: #666;">${food.address}</p>
-                            <div style="margin: 5px 0; color: #ffc107;">
-                                ${getStarRating(food.rating)}
-                                <span style="color: #666; margin-left: 5px;">${food.rating}</span>
-                            </div>
-                            <button style="margin-top: 10px; padding: 5px 10px; background: #1a6dcc; color: white; border: none; border-radius: 4px; cursor: pointer;" onclick="setDestination('${food.name}')">设为目的地</button>
-                        </div>
-                    `);
-                    infoWindow.open(map, food.position);
-                });
-                
-                foodList.appendChild(foodItem);
-            });
-            
-            // 如果搜索结果超过50个，显示提示
-            if (filteredFoods.length > 50) {
-                var moreItem = document.createElement('li');
-                moreItem.className = 'food-item';
-                moreItem.style.textAlign = 'center';
-                moreItem.style.color = '#666';
-                moreItem.innerHTML = `还有 ${filteredFoods.length - 50} 个美食，请使用搜索功能查找特定美食`;
-                foodList.appendChild(moreItem);
-            }
-        }
+      let html = `
+        <h3>${item.title}</h3>
+        <p><span class="badge ${item.type==='rent'?'badge-rent':'badge-sell'}">${item.type==='rent'?'租用':'出售'}</span>  ¥${item.price} · ${item.category}</p>
+        <p>${item.description}</p>
+        ${renderMedia(item.media)}
+        <p><small>发布者：${item.username} · ${new Date(item.date).toLocaleString()}</small></p>
+        ${paid ? '<p style="color:green;">✔️ 该物品已完成交易</p>' : ''}
+        <hr style="margin:12px 0;">
+        <h4>💬 与发布者聊天</h4>
+        <div class="chat-messages" id="chatMessagesContainer">${renderChatMessages(item.chatMessages)}</div>
+        <div style="display:flex;gap:8px;margin-top:8px;">
+          <input type="text" id="chatMessageInput" placeholder="输入消息..." style="flex:1;padding:8px;border-radius:20px;border:1px solid #ddd;">
+          <button class="btn btn-primary btn-sm" onclick="sendChatMessage('${item.id}')">发送</button>
+        </div>
+      `;
 
-        // 显示美食详情
-        function showFoodDetail(food) {
-            var foodDetail = document.getElementById('food-detail');
-            document.getElementById('detail-name').textContent = food.name;
-            document.getElementById('detail-address').textContent = '地址：' + food.address;
-            document.getElementById('detail-rating').innerHTML = '评分：' + getStarRating(food.rating) + ' ' + food.rating;
-            document.getElementById('detail-description').textContent = '描述：' + food.description;
-            document.getElementById('detail-price').textContent = '人均消费：' + food.price;
-            foodDetail.classList.add('active');
-        }
+      if(!paid && !isOwner) {
+        html += `
+          <div style="margin-top:16px;display:flex;gap:8px;justify-content:center;">
+            <button class="btn btn-wechat" onclick="initiatePayment('${item.id}','wechat')">💚 微信支付</button>
+            <button class="btn btn-alipay" onclick="initiatePayment('${item.id}','alipay')">💙 支付宝支付</button>
+          </div>
+        `;
+      }
 
-        // 设置目的地函数
-        function setDestination(name) {
-            document.getElementById('end-point').value = name;
-            document.getElementById('destination').textContent = name;
-            
-            // 切换到出行规划面板
-            sidebarTabs.forEach(function(tab) {
-                tab.classList.remove('active');
-            });
-            tabPanes.forEach(function(pane) {
-                pane.classList.remove('active');
-            });
-            
-            document.querySelector('.sidebar-tab[data-tab="route"]').classList.add('active');
-            document.getElementById('route-pane').classList.add('active');
-        }
+      content.innerHTML = html;
+      overlay.style.display = 'flex';
+      // 滚动聊天到底部
+      setTimeout(()=>{
+        const chatDiv = document.getElementById('chatMessagesContainer');
+        if(chatDiv) chatDiv.scrollTop = chatDiv.scrollHeight;
+      }, 10);
+    }
 
-        // 打车选项选择
-        var rideOptions = document.querySelectorAll('.ride-option');
-        rideOptions.forEach(function(option) {
-            option.addEventListener('click', function() {
-                rideOptions.forEach(function(opt) {
-                    opt.classList.remove('selected');
-                });
-                this.classList.add('selected');
-            });
-        });
+    function closeMarketDetail() {
+      document.getElementById('marketDetailOverlay').style.display = 'none';
+      refreshMarketView();
+    }
 
-        // 叫车功能 - 链接到花小猪
-        document.getElementById('call-ride').addEventListener('click', function() {
-            var selectedOption = document.querySelector('.ride-option.selected');
-            if (selectedOption) {
-                var rideType = selectedOption.getAttribute('data-type');
-                var rideTypes = {
-                    'economy': '经济型',
-                    'comfort': '舒适型',
-                    'premium': '豪华型'
-                };
-                
-                // 打开花小猪打车页面
-                window.open('https://www.huaxiaozhuchi.com', '_blank');
-            } else {
-                alert('请选择一种车型！');
-            }
-        });
+    function renderChatMessages(messages) {
+      if(!messages || messages.length===0) return '<div style="color:#999;text-align:center;">暂无消息，开始聊天吧</div>';
+      const currentUser = getCurrentUser();
+      return messages.map(m=>{
+        const isMine = currentUser && m.userId === currentUser.id;
+        return `<div class="chat-bubble ${isMine?'mine':'other'}">
+          <div class="msg">${m.text}</div>
+          <div class="meta">${m.username} · ${new Date(m.timestamp).toLocaleTimeString()}</div>
+        </div>`;
+      }).join('');
+    }
 
-        // 出行方式选择
-        var routeOptions = document.querySelectorAll('.route-option');
-        routeOptions.forEach(function(option) {
-            option.addEventListener('click', function() {
-                routeOptions.forEach(function(opt) {
-                    opt.classList.remove('active');
-                });
-                this.classList.add('active');
-            });
-        });
+    function sendChatMessage(itemId) {
+      const user = getCurrentUser();
+      if(!user) { showToast('请先登录','error'); return; }
+      const input = document.getElementById('chatMessageInput');
+      const text = input.value.trim();
+      if(!text) return;
+      const data = getData();
+      const item = data.marketItems.find(i=>i.id===itemId);
+      if(!item) return;
+      if(!item.chatMessages) item.chatMessages = [];
+      item.chatMessages.push({
+        userId: user.id,
+        username: user.wechatNickname || user.username,
+        avatar: user.avatar,
+        text: text,
+        timestamp: new Date().toISOString()
+      });
+      saveData(data);
+      input.value = '';
+      // 刷新聊天区域
+      const chatContainer = document.getElementById('chatMessagesContainer');
+      if(chatContainer) {
+        chatContainer.innerHTML = renderChatMessages(item.chatMessages);
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+      }
+    }
 
-        // 路径规划功能
-        document.getElementById('plan-route').addEventListener('click', function() {
-            var startPoint = document.getElementById('start-point').value;
-            var endPoint = document.getElementById('end-point').value;
-            var selectedMode = document.querySelector('.route-option.active').getAttribute('data-mode');
-            
-            if (!startPoint || !endPoint) {
-                alert('请输入起点和终点！');
-                return;
-            }
-            
-            // 模拟路径规划结果
-            var routeResult = document.getElementById('route-result');
-            var distance = Math.round(Math.random() * 20) + 5;
-            var time = Math.round(distance * (selectedMode === 'walking' ? 15 : (selectedMode === 'bicycling' ? 5 : 3)));
-            var cost = selectedMode === 'driving' ? '¥' + (distance * 2 + 5) : (selectedMode === 'transit' ? '¥' + (distance > 10 ? 5 : 3) : '免费');
-            
-            document.getElementById('route-distance').textContent = distance + '公里';
-            document.getElementById('route-time').textContent = time + '分钟';
-            document.getElementById('route-cost').textContent = cost;
-            
-            routeResult.style.display = 'block';
-            
-            // 在地图上显示路径（这里简化处理，实际应使用高德地图路径规划API）
-            alert(`已规划从【${startPoint}】到【${endPoint}】的${getModeName(selectedMode)}路线，距离${distance}公里，预计用时${time}分钟。`);
-        });
+    function initiatePayment(itemId, method) {
+      const user = getCurrentUser();
+      if(!user) { showToast('请先登录','error'); return; }
+      const data = getData();
+      const item = data.marketItems.find(i=>i.id===itemId);
+      if(!item) return;
+      if(item.paymentStatus === 'paid') { showToast('该物品已完成交易','error'); return; }
+      if(user.id === item.userId) { showToast('不能购买自己的物品','error'); return; }
 
-        // 获取出行方式名称
-        function getModeName(mode) {
-            var modeNames = {
-                'driving': '驾车',
-                'transit': '公交',
-                'walking': '步行',
-                'bicycling': '骑行'
-            };
-            return modeNames[mode] || '未知';
-        }
+      // 显示支付确认
+      const methodName = method==='wechat'?'微信支付':'支付宝支付';
+      if(!confirm(`确认使用 ${methodName} 支付 ¥${item.price} 吗？(演示)`)) return;
 
-        // 出行类型切换
-        document.getElementById('trip-type').addEventListener('change', function() {
-            var tripType = this.value;
-            if (tripType === 'local') {
-                document.getElementById('local-trip-form').style.display = 'block';
-                document.getElementById('long-trip-form').style.display = 'none';
-                document.getElementById('long-trip-plan').style.display = 'none';
-                document.getElementById('route-result').style.display = 'none';
-            } else {
-                document.getElementById('local-trip-form').style.display = 'none';
-                document.getElementById('long-trip-form').style.display = 'block';
-                document.getElementById('route-result').style.display = 'none';
-            }
-        });
+      // 模拟支付成功
+      item.paymentStatus = 'paid';
+      saveData(data);
+      showToast(`✅ ${methodName}支付成功！交易完成`, 'success');
+      closeMarketDetail();
+      refreshMarketView();
+    }
 
-        // 长途旅行规划功能
-        document.getElementById('plan-long-trip').addEventListener('click', function() {
-            var start = document.getElementById('long-start').value;
-            var destination = document.getElementById('long-destination').value;
-            var days = document.getElementById('trip-days').value;
-            var transport = document.getElementById('transport-type').value;
-            
-            if (!start || !destination) {
-                alert('请输入出发地和目的地！');
-                return;
-            }
-            
-            // 生成旅行计划
-            var tripPlan = document.getElementById('long-trip-plan');
-            tripPlan.innerHTML = '<h4>' + start + ' 到 ' + destination + ' ' + days + '日游计划</h4>';
-            
-            // 根据目的地和天数生成不同的旅行计划
-            var planContent = '';
-            
-            if (destination === '北京' && days === '4') {
-                planContent = `
-                    <div class="trip-day">
-                        <h4>第一天：抵达北京，游览天安门广场和故宫</h4>
-                        <ul>
-                            <li>上午：乘坐${getTransportName(transport)}抵达北京，入住酒店</li>
-                            <li>下午：游览天安门广场，参观故宫博物院</li>
-                            <li>晚上：王府井大街品尝北京小吃</li>
-                        </ul>
-                    </div>
-                    <div class="trip-day">
-                        <h4>第二天：长城一日游</h4>
-                        <ul>
-                            <li>上午：前往八达岭长城</li>
-                            <li>下午：游览长城，感受古代军事防御工程</li>
-                            <li>晚上：返回市区，享用北京烤鸭</li>
-                        </ul>
-                    </div>
-                    <div class="trip-day">
-                        <h4>第三天：颐和园和圆明园</h4>
-                        <ul>
-                            <li>上午：游览颐和园，欣赏皇家园林</li>
-                            <li>下午：参观圆明园遗址公园</li>
-                            <li>晚上：三里屯体验北京夜生活</li>
-                        </ul>
-                    </div>
-                    <div class="trip-day">
-                        <h4>第四天：天坛和返程</h4>
-                        <ul>
-                            <li>上午：游览天坛公园</li>
-                            <li>下午：购买特产，准备返程</li>
-                            <li>晚上：乘坐${getTransportName(transport)}返回${start}</li>
-                        </ul>
-                    </div>
-                    <div class="route-detail">
-                        <span>交通方式:</span>
-                        <span>${getTransportName(transport)}</span>
-                    </div>
-                    <div class="route-detail">
-                        <span>预估费用:</span>
-                        <span>¥${getEstimatedCost(days, transport)}</span>
-                    </div>
-                `;
-            } else {
-                // 通用旅行计划模板
-                for (var i = 1; i <= days; i++) {
-                    if (i === 1) {
-                        planContent += `
-                            <div class="trip-day">
-                                <h4>第${i}天：抵达${destination}</h4>
-                                <ul>
-                                    <li>上午：乘坐${getTransportName(transport)}抵达${destination}，入住酒店</li>
-                                    <li>下午：游览${destination}市区景点</li>
-                                    <li>晚上：品尝当地特色美食</li>
-                                </ul>
-                            </div>
-                        `;
-                    } else if (i == days) {
-                        planContent += `
-                            <div class="trip-day">
-                                <h4>第${i}天：${destination}游览及返程</h4>
-                                <ul>
-                                    <li>上午：游览${destination}著名景点</li>
-                                    <li>下午：购买特产，准备返程</li>
-                                    <li>晚上：乘坐${getTransportName(transport)}返回${start}</li>
-                                </ul>
-                            </div>
-                        `;
-                    } else {
-                        planContent += `
-                            <div class="trip-day">
-                                <h4>第${i}天：${destination}深度游</h4>
-                                <ul>
-                                    <li>上午：游览${destination}著名景点</li>
-                                    <li>下午：体验当地文化和美食</li>
-                                    <li>晚上：自由活动或休息</li>
-                                </ul>
-                            </div>
-                        `;
-                    }
-                }
-                
-                planContent += `
-                    <div class="route-detail">
-                        <span>交通方式:</span>
-                        <span>${getTransportName(transport)}</span>
-                    </div>
-                    <div class="route-detail">
-                        <span>预估费用:</span>
-                        <span>¥${getEstimatedCost(days, transport)}</span>
-                    </div>
-                `;
-            }
-            
-            tripPlan.innerHTML += planContent;
-            tripPlan.style.display = 'block';
-        });
+    // 点击模态框外部关闭
+    document.getElementById('marketDetailOverlay').addEventListener('click', function(e) {
+      if(e.target === this) closeMarketDetail();
+    });
+    document.getElementById('loginModalOverlay').addEventListener('click', function(e) {
+      if(e.target === this) closeLoginModal();
+    });
 
-        // 获取交通方式名称
-        function getTransportName(transport) {
-            var transportNames = {
-                'train': '高铁/火车',
-                'flight': '飞机',
-                'bus': '长途汽车',
-                'self-drive': '自驾'
-            };
-            return transportNames[transport] || '未知';
-        }
-
-        // 估算旅行费用
-        function getEstimatedCost(days, transport) {
-            var baseCost = days * 300; // 住宿和餐饮
-            var transportCost = {
-                'train': 500,
-                'flight': 1000,
-                'bus': 300,
-                'self-drive': 800
-            };
-            
-            return baseCost + (transportCost[transport] || 500);
-        }
-
-        // 搜索功能
-        var searchInput = document.getElementById('search-input');
-        var searchType = document.getElementById('search-type');
-        var searchButton = document.getElementById('search-button');
-        
-        searchButton.addEventListener('click', function() {
-            var keyword = searchInput.value.trim();
-            var type = searchType.value;
-            
-            if (keyword) {
-                // 使用高德地图的POI搜索
-                AMap.plugin('AMap.PlaceSearch', function() {
-                    var placeSearch = new AMap.PlaceSearch({
-                        pageSize: 10,
-                        pageIndex: 1,
-                        city: '浙江省',
-                        map: map
-                    });
-                    
-                    placeSearch.search(keyword, function(status, result) {
-                        if (status === 'complete' && result.info === 'OK') {
-                            // 搜索成功
-                            if (result.poiList.pois.length > 0) {
-                                var poi = result.poiList.pois[0];
-                                map.setCenter(poi.location);
-                                map.setZoom(15);
-                                
-                                infoWindow.setContent(`
-                                    <div style="padding: 10px;">
-                                        <h3 style="margin: 0 0 5px 0; color: #1a6dcc;">${poi.name}</h3>
-                                        <p style="margin: 0; color: #666;">${poi.address}</p>
-                                        <button style="margin-top: 10px; padding: 5px 10px; background: #1a6dcc; color: white; border: none; border-radius: 4px; cursor: pointer;" onclick="setDestination('${poi.name}')">设为目的地</button>
-                                    </div>
-                                `);
-                                infoWindow.open(map, poi.location);
-                            }
-                        }
-                    });
-                });
-            }
-        });
-        
-        // 回车键搜索
-        searchInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                searchButton.click();
-            }
-        });
-
-        // 学校搜索功能
-        document.getElementById('school-search').addEventListener('input', function() {
-            generateSchoolList();
-        });
-
-        // 美食搜索功能
-        document.getElementById('food-search').addEventListener('input', function() {
-            generateFoodList();
-        });
-
-        // 导航到美食地点
-        document.getElementById('navigate-to-food').addEventListener('click', function() {
-            var foodName = document.getElementById('detail-name').textContent;
-            setDestination(foodName);
-        });
-
-        // 初始化学校列表和美食列表
-        generateSchoolList();
-        generateFoodList();
-    </script>
+    window.onload = function() { updateUI(); refreshAll(); };
+  </script>
 </body>
 </html>
